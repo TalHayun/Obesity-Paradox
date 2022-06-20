@@ -2,8 +2,6 @@
 
 Team members : Tal Hayun, Oded Regev
 
-This Markdown file describes the data folder structure and organization ...
-
 ## obesity_measurement [25077 X 11]
 
 - person_id: A unique identifier for each person (Primary key).
