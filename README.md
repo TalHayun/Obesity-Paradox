@@ -1,5 +1,5 @@
 # SISE2601 Project data description
-================
+
 Team members : Tal Hayun, Oded Regev
 
 This Markdown file describes the data folder structure and organization ...
