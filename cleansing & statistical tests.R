@@ -589,3 +589,249 @@ fit_albumin1 <- logistic_reg() %>%
  set_engine("glm") %>%
  fit(binary_death_imm ~ value_as_number + age_during_hospitalization + gender + albumin, data = obesity_albumin_1, family = "binomial")
 tidy(fit_albumin1)
+
+person <- readRDS("person.RDS")
+visit <- readRDS("visit.RDS")
+condition_occurrence <- readRDS("condition_occurrence.RDS")
+death <- readRDS("death.RDS")
+observation_df <- readRDS("observation_df.RDS")
+measurement_specific <- readRDS("measurement_specific_df.RDS")
+obesity_measurement <- readRDS("obesity_measurement.RDS")
+
+# mutate a binary death column (0 - live, 1 - died), 25077 records
+obesity_measurement1 <-obesity_measurement %>% mutate_at(vars(binary_death), factor) 
+
+# selected the relevant column for clean table Kruskal-Waills test 
+obesity_time_untill_death <- time_from_hospitalization_to_death(obesity_measurement1) %>% select(bmi_group, gender, age_during_hospitalization, binary_death, years_from_hospitalization_to_death)
+
+# mutate death_immidiate binary column (0 - Null or above 0 years in hospitalizon, 1 - immidate death), repalcing the null values to 'Null'
+obesity_time_untill_death$years_from_hospitalization_to_death[is.na(obesity_time_untill_death$years_from_hospitalization_to_death)] <- 'Null'
+obesity_time_untill_death_1 <- obesity_time_untill_death %>%
+                            mutate(death_immidiate = ifelse(years_from_hospitalization_to_death == 'Null' | years_from_hospitalization_to_death > 0, 0, 1))
+
+# Use Kruskal Wallis test
+# We can see the the p-calue is small (3.121e-05) therefore at least one group is differnce from the others
+result_1 = kruskal.test(death_immidiate ~ bmi_group,
+                    data = obesity_time_untill_death_1)
+
+# define 6 different death_immidaite values by bmi_group (6 groups)
+imm_result_15_18.5_bmi_1 <- obesity_time_untill_death_1 %>% 
+    filter(bmi_group == '15-18.5') %>% 
+    select(death_immidiate)
+
+imm_result_18.5_25_bmi_1 <- obesity_time_untill_death_1 %>% 
+    filter(bmi_group == '18.5-25') %>% 
+    select(death_immidiate)
+
+imm_result_25_30_bmi_1 <- obesity_time_untill_death_1 %>% 
+    filter(bmi_group == '25-30') %>% 
+    select(death_immidiate)
+
+imm_result_30_35_bmi_1 <- obesity_time_untill_death_1 %>% 
+    filter(bmi_group == '30-35') %>% 
+    select(death_immidiate)
+
+imm_result_35_40_bmi_1 <- obesity_time_untill_death_1 %>% 
+    filter(bmi_group == '35-40') %>% 
+    select(death_immidiate)
+
+imm_result_40_45_bmi_1 <- obesity_time_untill_death_1 %>% 
+    filter(bmi_group == '40-45') %>% 
+    select(death_immidiate)
+
+#each group valus by bmi_group
+a_1 <- imm_result_15_18.5_bmi_1$death_immidiate #916
+b_1 <- imm_result_18.5_25_bmi_1$death_immidiate #8798
+c_1 <- imm_result_25_30_bmi_1$death_immidiate #9359
+d_1 <- imm_result_30_35_bmi_1$death_immidiate #3751
+e_1 <- imm_result_35_40_bmi_1$death_immidiate #1586
+f_1 <- imm_result_40_45_bmi_1$death_immidiate #667
+
+#perform Dunn's Test with Benjamini-Hochberg correction for p-values - immediate
+dunn.test(x=list(a_1, b_1, c_1, d_1, e_1, f_1), method="bh")
+
+# immidiate death prop by bmi_group 
+obesity_time_untill_death_1 %>% 
+count(bmi_group, death_immidiate)%>%
+group_by(bmi_group)%>%
+mutate(death_prop = n / sum(n))%>%
+filter(death_immidiate == 1) %>%
+select(bmi_group,death_prop) 
+
+# Drop immidiate died patients  
+obesity_time_untill_death_2 <- obesity_time_untill_death %>%
+                               filter(years_from_hospitalization_to_death >=1 | years_from_hospitalization_to_death == 'Null')
+
+# mutate death_1_years (0 - Null or above one years in hospitalizon, 1 - immidate death)
+obesity_time_untill_death_2 <- obesity_time_untill_death_2 %>%
+                            mutate(death_after_one_year = ifelse(years_from_hospitalization_to_death == 'Null' | years_from_hospitalization_to_death > 1, 0, 1))
+
+# define 6 different death_after_one_year values by bmi_group (6 groups)
+imm_result_15_18.5_bmi_2 <- obesity_time_untill_death_2 %>% 
+    filter(bmi_group == '15-18.5') %>% 
+    select(death_after_one_year)
+
+imm_result_18.5_25_bmi_2 <- obesity_time_untill_death_2 %>% 
+    filter(bmi_group == '18.5-25') %>% 
+    select(death_after_one_year)
+
+imm_result_25_30_bmi_2 <- obesity_time_untill_death_2 %>% 
+    filter(bmi_group == '25-30') %>% 
+    select(death_after_one_year)
+
+imm_result_30_35_bmi_2 <- obesity_time_untill_death_2 %>% 
+    filter(bmi_group == '30-35') %>% 
+    select(death_after_one_year)
+
+imm_result_35_40_bmi_2 <- obesity_time_untill_death_2 %>% 
+    filter(bmi_group == '35-40') %>% 
+    select(death_after_one_year)
+
+imm_result_40_45_bmi_2 <- obesity_time_untill_death_2 %>% 
+    filter(bmi_group == '40-45') %>% 
+    select(death_after_one_year)
+
+a_2 <- imm_result_15_18.5_bmi_2$death_after_one_year
+b_2 <- imm_result_18.5_25_bmi_2$death_after_one_year
+c_2 <- imm_result_25_30_bmi_2$death_after_one_year
+d_2 <- imm_result_30_35_bmi_2$death_after_one_year
+e_2 <- imm_result_35_40_bmi_2$death_after_one_year 
+f_2 <- imm_result_40_45_bmi_2$death_after_one_year 
+
+# use Kruskal Wallis test - we can see the the p-calue is small (2.759e-05) therefore a differnce between the groups
+result_2 = kruskal.test(death_after_one_year ~ bmi_group,
+                    data = obesity_time_untill_death_2)
+result_2
+
+#perform Dunn's Test with Benjamini-Hochberg correction for p-values - 1 year after hospitalization
+dunn.test(x=list(a, b, c, d, e, f), method="bh")
+
+# one year after hospitalization - death prop by bmi_group 
+obesity_time_untill_death_2 %>% 
+count(bmi_group, death_after_one_year)%>%
+group_by(bmi_group)%>%
+mutate(death_prop = n / sum(n))%>%
+filter(death_after_one_year == 1) %>% 
+select(bmi_group,death_prop) 
+
+# Drop immidiate or after one hospitalization died patients 
+obesity_time_untill_death_3 <- obesity_time_untill_death %>%
+                               filter(years_from_hospitalization_to_death >=5 | years_from_hospitalization_to_death == 'Null')
+# mutate death_5_years (0 - Null or above one years in hospitalizon, 1 - immidate death)
+obesity_time_untill_death_3 <- obesity_time_untill_death_3 %>%
+                            mutate(death_after_five_year = ifelse(years_from_hospitalization_to_death == 'Null' | years_from_hospitalization_to_death > 5, 0, 1))
+
+# define 6 different death_after_five_year values by bmi_group (6 groups)
+imm_result_15_18.5_bmi_3 <- obesity_time_untill_death_3 %>% 
+    filter(bmi_group == '15-18.5') %>% 
+    select(death_after_five_year)
+
+imm_result_18.5_25_bmi_3 <- obesity_time_untill_death_3 %>% 
+    filter(bmi_group == '18.5-25') %>% 
+    select(death_after_five_year)
+
+imm_result_25_30_bmi_3 <- obesity_time_untill_death_3 %>% 
+    filter(bmi_group == '25-30') %>% 
+    select(death_after_five_year)
+
+imm_result_30_35_bmi_3 <- obesity_time_untill_death_3 %>% 
+    filter(bmi_group == '30-35') %>% 
+    select(death_after_five_year)
+
+imm_result_35_40_bmi_3 <- obesity_time_untill_death_3 %>% 
+    filter(bmi_group == '35-40') %>% 
+    select(death_after_five_year)
+
+imm_result_40_45_bmi_3 <- obesity_time_untill_death_3 %>% 
+    filter(bmi_group == '40-45') %>% 
+    select(death_after_five_year)
+
+a_3 <- imm_result_15_18.5_bmi_3$death_after_five_year
+b_3 <- imm_result_18.5_25_bmi_3$death_after_five_year
+c_3 <- imm_result_25_30_bmi_3$death_after_five_year
+d_3 <- imm_result_30_35_bmi_3$death_after_five_year
+e_3 <- imm_result_35_40_bmi_3$death_after_five_year 
+f_3 <- imm_result_40_45_bmi_3$death_after_five_year 
+
+# use Kruskal Wallis test - we can see the the p-calue is big 0.517 therefore a not differnce between the groups
+result_3 = kruskal.test(death_after_five_year ~ bmi_group,
+                    data = obesity_time_untill_death_3)
+result_3
+
+# function that calculates time (in days) from of hospitalization
+Duration_of_hospitalization <-function(tablename) {
+    tablename <- tablename %>% 
+        mutate(days_of_hospitalization = as.numeric(difftime(as.Date(tablename$visit_end_date), as.Date(tablename$visit_start_date), units = "days")))
+}
+
+# Select BMI_GROUP and mutate each record days duration in hospitalization - 25077 records
+groups_days_hos<- Duration_of_hospitalization(obesity_measurement %>% select(bmi_group, visit_start_date, visit_end_date))
+# statistic information on days_of_hospitalization
+groups_days_hos <- groups_days_hos %>% filter (days_of_hospitalization >= 0)
+groups_days_hos %>% filter(2 < days_of_hospitalization, days_of_hospitalization < 20) %>% count() # 6146 our of 25077
+
+# filter days of hospitalization between 1 to 7 (9828 out of 10943)
+
+plot_4<- groups_days_hos %>% 
+    filter(days_of_hospitalization >=1, 
+          days_of_hospitalization <= 30)
+
+plot_5 <- ggplot(plot_4, aes(x = days_of_hospitalization, y = bmi_group, fill = bmi_group, color = bmi_group))+ 
+geom_density_ridges(alpha = 0.4) +
+scale_fill_viridis(discrete=TRUE, limits =  c("40-45", "35-40", "30-35","25-30","18.5-25","15-18.5"))+
+scale_color_viridis(discrete=TRUE, limits =  c("40-45", "35-40", "30-35","25-30","18.5-25","15-18.5")) +
+theme_ridges() +
+    labs(title = "Hospitalization duration distribution", 
+       x = "Duration of hospitalization (days)",
+       y = " BMI Group",
+       subtitle = "Divided by BMI group",
+        fill = 'BMI group',
+        color = 'BMI group') +
+    theme(plot.title = element_text(face="bold",size = 14), axis.title.x = element_text(hjust=0.5,size = 14),axis.title.y = element_text(hjust=0.5,size = 14),
+          plot.caption = element_text(hjust=0, size = 14),
+              plot.subtitle = element_text(, size = 13), legend.title = element_text(face="bold",size=13), legend.text = element_text(size=13)) 
+
+plot_5
+
+# use Kruskal Wallis test - we can see the the p-calue is small (6.24e-06) therefore a differnce between the groups
+result_31 = kruskal.test(days_of_hospitalization ~ bmi_group,
+                    data = plot_4)
+result_31
+
+# define 6 different death_immidaite values by bmi_group (6 groups)
+a <- plot_4 %>% 
+    filter(bmi_group == '15-18.5') %>% 
+    select(days_of_hospitalization)
+
+b <- plot_4 %>% 
+    filter(bmi_group == '18.5-25') %>% 
+    select(days_of_hospitalization)
+
+c <- plot_4 %>% 
+    filter(bmi_group == '25-30') %>% 
+    select(days_of_hospitalization)
+
+d <- plot_4 %>% 
+    filter(bmi_group == '30-35') %>% 
+    select(days_of_hospitalization)
+
+e <- plot_4 %>% 
+    filter(bmi_group == '35-40') %>% 
+    select(days_of_hospitalization)
+
+f <- plot_4 %>% 
+    filter(bmi_group == '40-45') %>% 
+    select(days_of_hospitalization)
+#each group valus by bmi_group
+a1 <- a$days_of_hospitalization
+b1 <- b$days_of_hospitalization
+c1 <- c$days_of_hospitalization 
+d1 <- d$days_of_hospitalization
+e1 <- e$days_of_hospitalization
+f1 <- f$days_of_hospitalization 
+
+# calculate the mean and sd of days_of_hospitalization for each bmi group
+plot_4 %>% group_by(bmi_group) %>%  summarise(n = n(), mean = mean(days_of_hospitalization), sd = sd(days_of_hospitalization))
+
+#perform Dunn's Test with Benjamini-Hochberg correction for p-values -  immediate
+dunn.test(x=list(a1, b1, c1, d1,e1,f1), method="bh")
