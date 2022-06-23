@@ -32,8 +32,8 @@ Understanding the association of obesity on survival after acute hospitalization
     - latest visit: 2020-12-28.
   
 5.  visit_end_date: The end date of the visit. 
-  - earliest visit: 1984-02-17.
-  - latest visit: 2021-04-23.
+     - earliest visit: 1984-02-17.
+     - latest visit: 2021-04-23.
   
   6. discharge_to: The place where the patient was released after hospitalization. Divided to 5 places.
     - count of home_visit: 17787.
