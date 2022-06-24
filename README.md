@@ -35,7 +35,7 @@ Understanding the association of obesity on survival after acute hospitalization
      - earliest visit: 1984-02-17
      - latest visit: 2021-04-23
   
-  6. discharge_to: The place where the patient was released after hospitalization. Divided to 5 places.
+6. discharge_to: The place where the patient was released after hospitalization. Divided to 5 places.
     - count of home_visit: 17787
     - count of observation room: 905
     - count of expired: 113
