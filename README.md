@@ -14,7 +14,7 @@ Understanding the association of obesity on survival after acute hospitalization
 
 
 # Appendix 
-### obesity_measurement [25077 X 13]
+### obesity_measurement [22087 X 13]
 
 1. person_id: A unique identifier for each person (Primary key).
 
@@ -23,9 +23,9 @@ Understanding the association of obesity on survival after acute hospitalization
 
 3. bmi_value: A floating value that refers the patient's bmi.
    - minimum: 15.04
-   - mean: 27.08
+   - mean: 27.32
    - maximum: 45
-   - standard deviation: 5.403
+   - standard deviation: 5.37
 
 4. visit_start_date: The start date of the visit.
     - earliest visit: 1984-02-01
@@ -36,18 +36,18 @@ Understanding the association of obesity on survival after acute hospitalization
      - latest visit: 2021-04-23
   
 6. discharge_to: The place where the patient was released after hospitalization. Divided to 5 places.
-    - count of home_visit: 17787
-    - count of observation room: 905
+    - count of home_visit: 15105
+    - count of observation room: 843
     - count of expired: 113
-    - count of Alternate care site (ACS): 439
-    - count of No matching concept: 5833
+    - count of Alternate care site (ACS): 438
+    - count of No matching concept: 5588
 
 7. death_date: The date the person was deceased.
 
 8. year_of_birth: year_of_birth: The year of birth of the person.
     - oldest patient yearh of birth : 1907
     - youngest patient yearh of birth : 2001
-    - standard deviation: 21.395
+    - standard deviation: 18.49
 
 9. gender: The gender of the person (Male or Female)
     - gender frequency: male - 50.3%, femele - 49.7%
