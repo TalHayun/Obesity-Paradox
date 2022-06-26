@@ -10,8 +10,7 @@ Secondly, we would like to check the effects of BMI on hospitalization outcomes,
 In addition, we will examine which confounding variables may affect the obesity paradox, for example: age, gender and amount of amount of albumin in the blood (a common protein).
 
 ## Useful
-Understanding the association of obesity on survival after acute hospitalization is important to guiding weight control recommendations.
-
+Understanding the association of obesity with survival after acute hospitalization is important for focused treatment of the patient according to his BMI.
 
 # Appendix 
 ### obesity_measurement [22087 X 13]
