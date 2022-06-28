@@ -279,6 +279,8 @@ saveRDS(measurement_visit_condition_death_person, file = "obesity_measurement.RD
 
 # save the obesity_albumin table as RDS files
 saveRDS(obesity_albumin, file = "obesity_albumin.RDS")
+obesity_albumin<-obesity_albumin %>% filter(age_during_hospitalization>=18)
+obesity_albumin 
 
 obesity_measurement <- readRDS("obesity_measurement.RDS")
 
@@ -300,6 +302,8 @@ time_string_from_hospitalization_to_death <- function(tablename) {
 
 # change the binary_death to factor (for logistic model)
 obesity_measurement <- obesity_measurement %>% mutate_at(vars(binary_death), factor)
+obesity_measurement<-obesity_measurement %>% filter(age_during_hospitalization>=18)
+obesity_measurement
 
 # find who died in an immediate period
 
@@ -335,9 +339,9 @@ imm_fit2 <- logistic_reg() %>%
  fit(binary_death_imm ~ value_as_number + age_during_hospitalization + gender, data = imm_rec, family = "binomial")
 tidy(imm_fit2)
 
-# diffrence between genders and age (0-60, and 60+)
+# diffrence between genders and age (18-60, and 60+)
 
-# logistic regression model for males, 0-60 in an immediate period
+# logistic regression model for males, 18-60 in an immediate period
 obesity_measurement_imm <- obesity_measurement_imm %>% mutate_at(vars(binary_death_imm), factor)
 obesity_measurement_imm_male_under60 <- obesity_measurement_imm %>% filter(gender == "Male", age_during_hospitalization < 60)
 death_mod <- logistic_reg() %>% 
@@ -355,7 +359,7 @@ death_fit2  <- death_mod %>%
     fit(binary_death_imm ~ value_as_number, data = obesity_measurement_imm_male_above60, family = "binomial")
 tidy(death_fit2)
 
-# logistic regression model for females, 0-60 in an immediate period
+# logistic regression model for females, 18-60 in an immediate period
 obesity_measurement_imm <- obesity_measurement_imm %>% mutate_at(vars(binary_death_imm), factor)
 obesity_measurement_imm_female_under60 <- obesity_measurement_imm %>% filter(gender == "Female", age_during_hospitalization < 60)
 death_mod <- logistic_reg() %>% 
@@ -443,7 +447,7 @@ death_fit5  <- death_mod %>%
     fit(binary_death_one_year ~ value_as_number, data = obesity_measurement_year_male_under60, family = "binomial")
 tidy(death_fit5)
 
-# diffrence between genders and age (0-60, and 60+) after one year
+# diffrence between genders and age (18-60, and 60+) after one year
 
 # logistic regression model for males, 60+ after one year
 obesity_measurement_1_year_bin <- obesity_measurement_1_year_bin %>% mutate_at(vars(binary_death_one_year), factor)
@@ -454,9 +458,9 @@ death_fit6  <- death_mod %>%
     fit(binary_death_one_year ~ value_as_number, data = obesity_measurement_year_male_above60, family = "binomial")
 tidy(death_fit6)
 
-# diffrence between genders and age (0-60, and 60+) after one year
+# diffrence between genders and age (18-60, and 60+) after one year
 
-# logistic regression model for females, 0-60 after one year
+# logistic regression model for females, 18-60 after one year
 obesity_measurement_1_year_bin <- obesity_measurement_1_year_bin %>% mutate_at(vars(binary_death_one_year), factor)
 obesity_measurement_year_female_under60 <- obesity_measurement_1_year_bin %>% filter(gender == "Female", age_during_hospitalization < 60)
 death_mod <- logistic_reg() %>% 
@@ -465,7 +469,7 @@ death_fit7  <- death_mod %>%
     fit(binary_death_one_year ~ value_as_number, data = obesity_measurement_year_female_under60, family = "binomial")
 tidy(death_fit7)
 
-# diffrence between genders and age (0-60, and 60+) after one year
+# diffrence between genders and age (18-60, and 60+) after one year
 
 # logistic regression model for females, 60+ after one year
 obesity_measurement_1_year_bin <- obesity_measurement_1_year_bin %>% mutate_at(vars(binary_death_one_year), factor)
@@ -770,7 +774,7 @@ groups_days_hos<- Duration_of_hospitalization(obesity_measurement %>% select(bmi
 groups_days_hos <- groups_days_hos %>% filter (days_of_hospitalization >= 0)
 groups_days_hos %>% filter(2 < days_of_hospitalization, days_of_hospitalization < 20) %>% count() # 6146 our of 25077
 
-# filter days of hospitalization between 1 to 7 (9828 out of 10943)
+# filter days of hospitalization between 1 to 7 
 
 plot_4<- groups_days_hos %>% 
     filter(days_of_hospitalization >=1, 
@@ -835,3 +839,6 @@ plot_4 %>% group_by(bmi_group) %>%  summarise(n = n(), mean = mean(days_of_hospi
 
 #perform Dunn's Test with Benjamini-Hochberg correction for p-values -  immediate
 dunn.test(x=list(a1, b1, c1, d1,e1,f1), method="bh")
+
+#prefom linear regression to predict bmi_value by gender, age, albumin
+linear_reg() %>%  set_engine("lm") %>%  fit(value_as_number ~ gender + age_during_hospitalization + albumin, data = obesity_albumin) %>% tidy()
