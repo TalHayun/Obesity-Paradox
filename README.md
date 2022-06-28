@@ -54,7 +54,7 @@ Understanding the association of obesity with survival after acute hospitalizati
 10. age_during_hospitalization: The number of years that the patient have been in hospitalization.
 
 11. binary_death: Binary value that refers if the patient death or not (0-live, 1- died).
-    - death frequency: live - 67.74%, died - 32.26%
+    - death frequency: live - 53.7%, died - 36.3%
   
 12. dur_of_hospitalizaition: Numberical value of inpatient's days in hospitalization.
 
