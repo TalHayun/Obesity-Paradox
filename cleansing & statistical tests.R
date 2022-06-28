@@ -415,15 +415,15 @@ b_probs <- exp(males_above_60)/(1 + exp(males_above_60))
 d_probs <- exp(females_above_60)/(1 + exp(females_above_60))
 
 # mortality probability by gender and age
-plot.data <- data.frame("Males, 0-60"=a_probs, "Males, 60+"=b_probs,"Females, 60+" =d_probs, X1=new_bmis1)
-plot.data <- rename(plot.data, "Males, 0-60" = Males..0.60,  "Males, 60+" = Males..60.,"Females, 60+" = Females..60. )
-plot.data <- gather(plot.data, key=Group, value= prob, "Males, 0-60", "Males, 60+", "Females, 60+")
+plot.data <- data.frame("Males, 18-60"=a_probs, "Males, 60+"=b_probs,"Females, 60+" =d_probs, X1=new_bmis1)
+plot.data <- rename(plot.data, "Males, 18-60" = Males..18.60,  "Males, 60+" = Males..60.,"Females, 60+" = Females..60. )
+plot.data <- gather(plot.data, key=Group, value= prob, "Males, 18-60", "Males, 60+", "Females, 60+")
 
-cols <- c("Males, 60+" = "indianred1",  "Males, 0-60" = "green3", "Females, 60+" = "deepskyblue2")
+cols <- c("Males, 60+" = "indianred1",  "Males, 18-60" = "green3", "Females, 60+" = "deepskyblue2")
 
 ggplot(plot.data, aes(x=X1, y=prob, color=Group)) + # asking it to set the color by the variable "group" is what makes it draw three different lines
   geom_line(lwd=2) +  
-  scale_color_manual(values = cols, breaks = c( "Males, 60+", "Females, 60+", "Males, 0-60"),) +
+  scale_color_manual(values = cols, breaks = c( "Males, 60+", "Females, 60+", "Males, 18-60"),) +
       labs(x = expression("BMI (kg/m"^"2"*")"), y="Mortality rate (%)", title="How BMI affects hospitalized mortality rate in the immediate period",
        subtitle = "Divided by gender and age groups") +
         theme(plot.title = element_text(face="bold",size = 14), axis.title.x = element_text(hjust=0.5,size = 14),axis.title.y = element_text(hjust=0.5,size = 14),
@@ -436,9 +436,9 @@ one_year_rec_fit <- logistic_reg() %>%
  fit(binary_death_one_year ~ value_as_number + age_during_hospitalization + gender, data = one_year_rec, family = "binomial")
 tidy(one_year_rec_fit)
 
-# diffrence between genders and age (0-60, and 60+) after one year
+# diffrence between genders and age (18-60, and 60+) after one year
 
-# logistic regression model for males, 0-60 after one year
+# logistic regression model for males, 18-60 after one year
 obesity_measurement_1_year_bin <- obesity_measurement_1_year_bin %>% mutate_at(vars(binary_death_one_year), factor)
 obesity_measurement_year_male_under60 <- obesity_measurement_1_year_bin %>% filter(gender == "Male", age_during_hospitalization < 60)
 death_mod <- logistic_reg() %>% 
@@ -602,7 +602,7 @@ observation_df <- readRDS("observation_df.RDS")
 measurement_specific <- readRDS("measurement_specific_df.RDS")
 obesity_measurement <- readRDS("obesity_measurement.RDS")
 
-# mutate a binary death column (0 - live, 1 - died), 25077 records
+# mutate a binary death column (0 - live, 1 - died), 22087 records
 obesity_measurement1 <-obesity_measurement %>% mutate_at(vars(binary_death), factor) 
 
 # selected the relevant column for clean table Kruskal-Waills test 
@@ -614,7 +614,7 @@ obesity_time_untill_death_1 <- obesity_time_untill_death %>%
                             mutate(death_immidiate = ifelse(years_from_hospitalization_to_death == 'Null' | years_from_hospitalization_to_death > 0, 0, 1))
 
 # Use Kruskal Wallis test
-# We can see the the p-calue is small (3.121e-05) therefore at least one group is differnce from the others
+# We can see the the p-calue is small (2.779e-07) therefore at least one group is differnce from the others
 result_1 = kruskal.test(death_immidiate ~ bmi_group,
                     data = obesity_time_untill_death_1)
 
@@ -702,7 +702,7 @@ d_2 <- imm_result_30_35_bmi_2$death_after_one_year
 e_2 <- imm_result_35_40_bmi_2$death_after_one_year 
 f_2 <- imm_result_40_45_bmi_2$death_after_one_year 
 
-# use Kruskal Wallis test - we can see the the p-calue is small (2.759e-05) therefore a differnce between the groups
+# use Kruskal Wallis test - we can see the the p-calue is small (3.553e-07) therefore a differnce between the groups
 result_2 = kruskal.test(death_after_one_year ~ bmi_group,
                     data = obesity_time_untill_death_2)
 result_2
@@ -757,7 +757,7 @@ d_3 <- imm_result_30_35_bmi_3$death_after_five_year
 e_3 <- imm_result_35_40_bmi_3$death_after_five_year 
 f_3 <- imm_result_40_45_bmi_3$death_after_five_year 
 
-# use Kruskal Wallis test - we can see the the p-calue is big 0.517 therefore a not differnce between the groups
+# use Kruskal Wallis test - we can see the the p-value is 0.3361 (not significant) therefore a not differnce between the groups
 result_3 = kruskal.test(death_after_five_year ~ bmi_group,
                     data = obesity_time_untill_death_3)
 result_3
@@ -768,11 +768,11 @@ Duration_of_hospitalization <-function(tablename) {
         mutate(days_of_hospitalization = as.numeric(difftime(as.Date(tablename$visit_end_date), as.Date(tablename$visit_start_date), units = "days")))
 }
 
-# Select BMI_GROUP and mutate each record days duration in hospitalization - 25077 records
+# Select BMI_GROUP and mutate each record days duration in hospitalization - 22087 records
 groups_days_hos<- Duration_of_hospitalization(obesity_measurement %>% select(bmi_group, visit_start_date, visit_end_date))
 # statistic information on days_of_hospitalization
 groups_days_hos <- groups_days_hos %>% filter (days_of_hospitalization >= 0)
-groups_days_hos %>% filter(2 < days_of_hospitalization, days_of_hospitalization < 20) %>% count() # 6146 our of 25077
+groups_days_hos %>% filter(2 < days_of_hospitalization, days_of_hospitalization < 20) %>% count() # 5148 our of 22087
 
 # filter days of hospitalization between 1 to 7 
 
@@ -797,7 +797,7 @@ theme_ridges() +
 
 plot_5
 
-# use Kruskal Wallis test - we can see the the p-calue is small (6.24e-06) therefore a differnce between the groups
+# use Kruskal Wallis test - we can see the the p-calue is small (0.002641) therefore a differnce between the groups
 result_31 = kruskal.test(days_of_hospitalization ~ bmi_group,
                     data = plot_4)
 result_31
