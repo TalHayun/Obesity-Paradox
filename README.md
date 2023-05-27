@@ -1,7 +1,4 @@
-# SISE2601 Project data description - Obesity Paradox
-
-## Introduction
-Obesity is one of the great epidemics of the 21st century. It is considered a risk factor for many diseases and can cause a decrease in function, quality of life and an increase in mortality. However, in many cases of acute stress, one encounters an opposite and surprising phenomenon called the "obesity paradox", in which a high BMI (Body mass index) is a protective factor against mortality. This phenomenon exists in inpatients in different wards of hospitals and is particularly prevalent among patients with acute infectious disease. However, there exists a small number of studies that show reversed relationship, in which obesity is indeed a risk factor for mortality after hospitalization. For example, one study has found that in examining the effect of obesity after one year from hospitalization, the paradox disappeared.
+# Obesity Paradox
 
 ## Research Questions
 In this research, we would to examine how the BMI rate affects mortality
@@ -13,50 +10,24 @@ In addition, we will examine which confounding variables may affect the obesity 
 Understanding the association of obesity with survival after acute hospitalization is important for focused treatment of the patient according to his BMI.
 
 # Appendix 
-### obesity_measurement [22087 X 13]
 
-1. person_id: A unique identifier for each person (Primary key).
+This file contains 4 sections:
 
-2. bmi_group: A range that refers to six different bmi groups.
-   - groups values: 15-18.5, 18.5-25, 25-30, 30-35, 35-40, 40-45.
+1. Functions:
+The functions we wrote and used during the research
 
-3. bmi_value: A floating value that refers the patient's bmi.
-   - minimum: 15.04
-   - mean: 27.32
-   - maximum: 45
-   - standard deviation: 5.37
+2. Analysis of the main research question - what is the association between BMI and mortality for different time horizons.
+We examined the effect of BMI, age and gender on hospitalization mortality in three time frames -
+Immediate time (up to 3 months), 1 year and 5 years.
+We used 3 different analysis methods:
 
-4. visit_start_date: The start date of the visit.
-    - earliest visit: 1984-02-01
-    - latest visit: 2020-12-28
-  
-5.  visit_end_date: The end date of the visit. 
-     - earliest visit: 1984-02-17
-     - latest visit: 2021-04-23
-  
-6. discharge_to: The place where the patient was released after hospitalization. Divided to 5 places.
-    - count of home_visit: 15105
-    - count of observation room: 843
-    - count of expired: 113
-    - count of Alternate care site (ACS): 438
-    - count of No matching concept: 5588
+   -  Logistic regression on continuous BMI
+   - Logistic regression on BMI groups
+   - Survival analysis
+   
+3. Analysis of the second research question - what is the association of BMI and additional hospitalization outcomes:
+We examined the effect of BMI, age and gender on additional hospitalization outcomes such as the duration of hospitalization and occurrence of re-hospitalizations.
 
-7. death_date: The date the person was deceased.
-
-8. year_of_birth: year_of_birth: The year of birth of the person.
-    - oldest patient yearh of birth : 1907
-    - youngest patient yearh of birth : 2001
-    - standard deviation: 18.49
-
-9. gender: The gender of the person (Male or Female)
-    - gender frequency: male - 50.3%, femele - 49.7%
-
-10. age_during_hospitalization: The number of years that the patient have been in hospitalization.
-
-11. binary_death: Binary value that refers if the patient death or not (0-live, 1- died).
-    - death frequency: live - 53.7%, died - 36.3%
-  
-12. dur_of_hospitalizaition: Numberical value of inpatient's days in hospitalization.
-
-13. albumin: A floating value that refers the patient's albumin.
+4. Analysis of confounding variables
+We examined through logistic regression whether there are confounding variables such as background diseases, infectious diseases and measurement variables.
   
