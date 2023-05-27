@@ -3,7 +3,7 @@
 ## Research Questions
 In this research, we would to examine how the BMI rate affects mortality
 in an immediate period (0-6 months), after one year and five years from the moment of hospitalization, among patients with infectious disease who were hospitalized in the various wards.
-Secondly, we would like to check the effects of BMI on hospitalization outcomes, such as: duration of hospitalization and weather the patient discharged home at the end of hospitalization.
+Secondly, we would like to check the effects of BMI on hospitalization outcomes, such as: duration of hospitalization.
 In addition, we will examine which confounding variables may affect the obesity paradox, for example: age, gender and amount of amount of albumin in the blood (a common protein).
 
 ## Useful
